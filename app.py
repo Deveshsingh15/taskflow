@@ -6,7 +6,7 @@ from flask_cors import CORS
 from datetime import datetime, timedelta
 import os
 
-app = Flask(__name__, static_folder='../frontend', static_url_path='')
+app = Flask(__name__, static_folder='frontend', static_url_path='')
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -385,7 +385,14 @@ def dashboard():
 
 @app.route('/')
 def index():
-    return send_from_directory('../frontend', 'index.html')
+    return send_from_directory('frontend', 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    file_path = os.path.join(app.static_folder, path)
+    if os.path.exists(file_path):
+        return send_from_directory(app.static_folder, path)
+    return send_from_directory('frontend', 'index.html')
 
 @app.route('/health')
 def health():
